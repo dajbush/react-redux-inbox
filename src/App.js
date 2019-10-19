@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import MessageList from './MessageList';
 import Toolbar from './Toolbar';
-import {getAllMessages} from './requests';
+import {getAllMessages,toggleStar,markMessageRead} from './requests';
 
 class App extends React.Component {
     
@@ -13,12 +13,23 @@ class App extends React.Component {
     };
 
     componentDidMount() {
+        console.log("mount");
         getAllMessages().then(data => this.setState(
             {
                 messages: data,
                 checkedMessages: data.filter(message => !!message.selected)
             }
         ));
+    }
+
+    componentWillUpdate() {
+        console.log("update");
+        // getAllMessages().then(data => this.setState(
+        //     {
+        //         messages: data,
+        //         checkedMessages: data.filter(message => !!message.selected)
+        //     }
+        // ));
     }
 
     handleBulkSelect = () => {
@@ -67,21 +78,26 @@ class App extends React.Component {
     }
 
     handleStar = (id, starred) => {
-        let messages = this.state.messages.slice();
-        this.setState({
-            messages: messages.map(message => {
-                if(message.id === id) {
-                    return {
-                        ...message,
-                        starred: starred
-                    }
-                }
-                else {
-                    return message;
-                }
-            }),
+        //let messages = this.state.messages.slice();
+        // this.setState({
+        //     messages: messages.map(message => {
+        //         if(message.id === id) {
+        //             return {
+        //                 ...message,
+        //                 starred: starred
+        //             }
+        //         }
+        //         else {
+        //             return message;
+        //         }
+        //     }),
 
-        });
+        // });
+
+        //call api
+        let messageIdsToUpdate = this.state.messages.slice().filter(message => message.id === id).map(message => message.id);
+        toggleStar(messageIdsToUpdate).then(data => this.setState({messages: data}));
+
     }
 
     markMessageRead = (id) => {
@@ -102,32 +118,42 @@ class App extends React.Component {
 
     markMessagesRead = () => {
         let messages = this.state.messages.slice();
-        let checkedMessages = this.state.checkedMessages.slice();
+        let checkedMessages = this.state.checkedMessages.slice().map(checkedMessage => messages.find(message => checkedMessage.id === message.id));
+        //console.log('checkedMessages before change', checkedMessages);
+        //checkedMessages.map(checkedMessage => messages.find(message => checkedMessage.id === message.id));
+        //console.log('checkedMessages after change', checkedMessages);
         console.log('mark these as read', this.state.checkedMessages);
-        this.setState({
-            messages: messages.map(message => {
-                console.log('contains ', checkedMessages.includes(message));
-                if(checkedMessages.includes(message)) {
-                    message.read = true;
-                }
-                return message;
-            })
-        });
+        // this.setState({
+        //     messages: messages.map(message => {
+        //         console.log('contains ', checkedMessages.includes(message));
+        //         if(checkedMessages.includes(message)) {
+        //             message.read = true;
+        //         }
+        //         return message;
+        //     })
+        // });
+
+        //call api
+        let messageIdsToUpdate = messages.filter(message => checkedMessages.includes(message)).map(message => message.id);
+        markMessageRead(messageIdsToUpdate, true).then(data => this.setState({messages: data}));
     }
 
     markMessagesUnread = () => {
         let messages = this.state.messages.slice();
-        let checkedMessages = this.state.checkedMessages.slice();
+        let checkedMessages = this.state.checkedMessages.slice().map(checkedMessage => messages.find(message => checkedMessage.id === message.id));
+        //console.log('checkedMessages after change', checkedMessages);
         console.log('mark these as Unread', this.state.checkedMessages);
-        this.setState({
-            messages: messages.map(message => {
-                console.log('contains ', checkedMessages.includes(message));
-                if(checkedMessages.includes(message)) {
-                    message.read = false;
-                }
-                return message;
-            })
-        });
+        // this.setState({
+        //     messages: messages.map(message => {
+        //         console.log('contains ', checkedMessages.includes(message));
+        //         if(checkedMessages.includes(message)) {
+        //             message.read = false;
+        //         }
+        //         return message;
+        //     })
+        // });
+        let messageIdsToUpdate = messages.filter(message => checkedMessages.includes(message)).map(message => message.id);
+        markMessageRead(messageIdsToUpdate, false).then(data => this.setState({messages: data}));
     }
 
     deleteMessages = () => {
