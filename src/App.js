@@ -98,6 +98,17 @@ class App extends React.Component {
 
     markMessagesUnread = () => {
         let messages = [...this.state.messages];
+        let checkedMessages = [...this.state.checkedMessages];
+        console.log('mark these as Unread', this.state.checkedMessages);
+        this.setState({
+            messages: messages.map(message => {
+                console.log('contains ', checkedMessages.includes(message));
+                if(checkedMessages.includes(message)) {
+                    message.read = false;
+                }
+                return message;
+            })
+        });
     }
 
     render() {
@@ -108,6 +119,7 @@ class App extends React.Component {
                 <Toolbar 
                     handleBulkSelect={this.handleBulkSelect} 
                     markMessagesRead={this.markMessagesRead} 
+                    markMessagesUnread = {this.markMessagesUnread}
                     numberOfCheckedMessages={this.state.checkedMessages.length} 
                     allChecked={this.state.checkedMessages.length === this.state.messages.length}
                 />

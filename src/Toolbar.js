@@ -14,14 +14,14 @@ class Toolbar extends React.Component {
                     </p>
 
                     <button className="btn btn-default" onClick={this.props.handleBulkSelect}>
-                        <i className="fa fa-square-o"></i>
+                        <i className={`fa fa-${this.props.numberOfCheckedMessages > 0 ? this.props.allChecked ? "check-" : "minus-" : ""}square-o`}></i>
                     </button>
 
                     <button className="btn btn-default" onClick={this.props.markMessagesRead} disabled={`${this.props.numberOfCheckedMessages > 0 ? "" : "disabled"}`}>
                         Mark As Read
                     </button>
 
-                    <button className="btn btn-default" disabled="disabled">
+                    <button className="btn btn-default" onClick={this.props.markMessagesUnread} disabled={`${this.props.numberOfCheckedMessages > 0 ? "" : "disabled"}`}>
                         Mark As Unread
                     </button>
 
