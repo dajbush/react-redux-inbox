@@ -68,3 +68,18 @@ export function editLabels(messageIds, add, label) {
     .then(data => data)
     .catch(console.log);
 }
+
+export function createMessage(subject, body) {
+    return fetch('http://localhost:8082/api/messages', 
+                {
+                    headers: {'Content-Type': 'application/json'},
+                    method: 'POST',
+                    body: JSON.stringify({
+                        subject: subject,
+                        body: body
+                    })
+                }
+    ).then(response => response.json())
+    .then(data => data)
+    .catch(console.log);
+}

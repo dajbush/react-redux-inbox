@@ -2,14 +2,16 @@ import React from 'react';
 import './App.css';
 import MessageList from './MessageList';
 import Toolbar from './Toolbar';
-import {getAllMessages,toggleStar,markMessageRead,deleteMessages,editLabels} from './requests';
+import ComposeForm from './ComposeForm';
+import {getAllMessages,toggleStar,markMessageRead,deleteMessages,editLabels,createMessage} from './requests';
 
 class App extends React.Component {
     
     state = {
         messages: [],
         checkedMessages: [],
-        starredMessages: []
+        starredMessages: [],
+        compose: false
     };
 
     componentDidMount() {
@@ -144,8 +146,20 @@ class App extends React.Component {
                 }
             })
         }));
+    }
 
-}
+    handleCompose = () => {
+        this.setState({compose: !this.state.compose});
+    }
+
+    handleComposeSubmit = (subject, body) => {
+        console.log('submit form');
+        createMessage(subject, body)
+        .then(data => this.setState({
+            compose: !this.state.compose,
+            messages: [...this.state.messages, data]
+        }));
+    }
 
     render() {
         console.log('messages ', this.state.messages);
@@ -168,7 +182,11 @@ class App extends React.Component {
                     numberOfCheckedMessages={checkedMessages.length} 
                     allChecked={checkedMessages.length === this.state.messages.length}
                     unreadCount={unreadMessageCount}
+                    handleCompose={this.handleCompose}
                 />
+                {this.state.compose &&
+                    <ComposeForm handleComposeSubmit ={this.handleComposeSubmit} />
+                }
                 <MessageList 
                     handleCheck={this.handleCheck}
                     handleStar={this.handleStar} 

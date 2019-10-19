@@ -24,6 +24,10 @@ class Toolbar extends React.Component {
                         {`unread message${this.props.unreadCount === 1 ? "" : "s"}`}
                     </p>
 
+                    <a className="btn btn-danger" onClick={this.props.handleCompose}>
+                        <i className="fa fa-plus"></i>
+                    </a>
+
                     <button className="btn btn-default" onClick={this.props.handleBulkSelect}>
                         <i className={`fa fa-${this.props.numberOfCheckedMessages > 0 ? this.props.allChecked ? "check-" : "minus-" : ""}square-o`}></i>
                     </button>
