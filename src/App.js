@@ -68,17 +68,36 @@ class App extends React.Component {
 
     handleStar = (id, starred) => {
         let messages = this.state.messages.slice();
-        this.setState({messages: messages.map(message => {
-            if(message.id === id) {
-                return {
-                    ...message,
-                    starred: starred
+        this.setState({
+            messages: messages.map(message => {
+                if(message.id === id) {
+                    return {
+                        ...message,
+                        starred: starred
+                    }
                 }
-            }
-            else {
-                return message;
-            }
-        })});
+                else {
+                    return message;
+                }
+            }),
+
+        });
+    }
+
+    markMessageRead = (id) => {
+        this.setState({
+            messages: this.state.messages.slice().map(message => {
+                if(message.id === id) {
+                    return {
+                        ...message,
+                        read: true
+                    }
+                }
+                else {
+                    return message;
+                }
+            })
+        });
     }
 
     markMessagesRead = () => {
@@ -175,7 +194,10 @@ class App extends React.Component {
                     allChecked={this.state.checkedMessages.length === this.state.messages.length}
                     unreadCount={unreadMessageCount}
                 />
-                <MessageList handleCheck={this.handleCheck} handleStar={this.handleStar} messages={this.state.messages} />
+                <MessageList handleCheck={this.handleCheck}
+                             handleStar={this.handleStar} 
+                             messages={this.state.messages} 
+                             markMessageRead={this.markMessageRead}/>
             </div>
         );
     }
