@@ -1,7 +1,20 @@
 import React from 'react';
 
 class Toolbar extends React.Component {
-    
+    state = {
+        applyLabelValue: "Apply label",
+        removeLabelValue: "Remove label"
+    }
+
+    applyLabelOnChange = (e) => {
+        this.setState({applyLabelValue: e.target.value});
+        if(e.target.value !== "Apply label") this.props.addLabels(e.target.value);
+    }
+
+    removeLabelOnChange = (e) => {
+        this.setState({removeLabelValue: e.target.value});
+        if(e.target.value !== "Remove label") this.props.removeLabels(e.target.value);
+    }
 
     render() {
         console.log('all checked ', this.props.allChecked);
@@ -9,7 +22,7 @@ class Toolbar extends React.Component {
             <div className="row toolbar">
                 <div className="col-md-12">
                     <p className="pull-right">
-                        <span className="badge badge">2</span>
+                        <span className="badge badge">{this.props.unreadCount}</span>
                         unread messages
                     </p>
 
@@ -25,21 +38,21 @@ class Toolbar extends React.Component {
                         Mark As Unread
                     </button>
 
-                    <select className="form-control label-select" disabled="disabled">
+                    <select className="form-control label-select" onChange={this.applyLabelOnChange} disabled={`${this.props.numberOfCheckedMessages > 0 ? "" : "disabled"}`}>
                         <option>Apply label</option>
                         <option value="dev">dev</option>
                         <option value="personal">personal</option>
                         <option value="gschool">gschool</option>
                     </select>
 
-                    <select className="form-control label-select" disabled="disabled">
+                    <select className="form-control label-select" onChange={this.removeLabelOnChange} disabled={`${this.props.numberOfCheckedMessages > 0 ? "" : "disabled"}`}>
                         <option>Remove label</option>
                         <option value="dev">dev</option>
                         <option value="personal">personal</option>
                         <option value="gschool">gschool</option>
                     </select>
 
-                    <button className="btn btn-default" disabled="disabled">
+                    <button className="btn btn-default" onClick={this.props.deleteMessages} disabled={`${this.props.numberOfCheckedMessages > 0 ? "" : "disabled"}`}>
                         <i className="fa fa-trash-o"></i>
                     </button>
                 </div>

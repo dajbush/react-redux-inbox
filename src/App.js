@@ -111,17 +111,69 @@ class App extends React.Component {
         });
     }
 
+    deleteMessages = () => {
+        let messages = [...this.state.messages];
+        let checkedMessages = [...this.state.checkedMessages];
+        console.log('delete these ', checkedMessages);
+
+        // messages.filter(message => checkedMessages.includes(message));
+        console.log('filtered ', messages.filter(message => !checkedMessages.includes(message)));
+        this.setState({
+            messages: messages.filter(message => !checkedMessages.includes(message)),
+            checkedMessages: []
+        });
+    }
+
+    addLabels = (label) => {
+        console.log('label ', label);
+        let messages = [...this.state.messages];
+        let checkedMessages = [...this.state.checkedMessages];
+
+        this.setState({
+            messages: messages.map(message => {
+                if(checkedMessages.includes(message)) {
+                    let i = message.labels.findIndex(currLabel => currLabel === label);
+                    if(i < 0) message.labels.push(label);
+                    message.labels.sort();
+                }
+                return message;
+            })
+        })
+    }
+
+    removeLabels = (label) => {
+        console.log('label ', label);
+        let messages = [...this.state.messages];
+        let checkedMessages = [...this.state.checkedMessages];
+
+        this.setState({
+            messages: messages.map(message => {
+                if(checkedMessages.includes(message)) {
+                    message.labels = message.labels.filter(currLabel => currLabel !== label).sort();
+                }
+                return message;
+            })
+        }); 
+}
+
     render() {
         console.log('messages ', this.state.messages);
-        console.log('check messages ', this.state.checkedMessages);
+        console.log('checked messages ', this.state.checkedMessages);
+        //calculate number of unread messages
+        let unreadMessageCount = this.state.messages.slice().reduce((count, message) => !message.read ? count + 1 : count, 0);
+
         return (
             <div className="wrapper">
                 <Toolbar 
                     handleBulkSelect={this.handleBulkSelect} 
                     markMessagesRead={this.markMessagesRead} 
                     markMessagesUnread = {this.markMessagesUnread}
+                    deleteMessages = {this.deleteMessages}
+                    addLabels = {this.addLabels}
+                    removeLabels = {this.removeLabels}
                     numberOfCheckedMessages={this.state.checkedMessages.length} 
                     allChecked={this.state.checkedMessages.length === this.state.messages.length}
+                    unreadCount={unreadMessageCount}
                 />
                 <MessageList handleCheck={this.handleCheck} handleStar={this.handleStar} messages={this.state.messages} />
             </div>
