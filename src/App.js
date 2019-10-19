@@ -7,54 +7,49 @@ import {getAllMessages,toggleStar,markMessageRead,deleteMessages,editLabels,crea
 
 class App extends React.Component {
     
-    state = {
-        messages: [],
-        checkedMessages: [],
-        starredMessages: [],
-        compose: false
-    };
+    constructor(props) {
+        super(props);
+        this.state = 
+        {
+            messages: [],
+            checkedMessages: [],
+            starredMessages: [],
+            compose: false
+        };
+    }
 
     componentDidMount() {
-        console.log("mount");
         getAllMessages().then(data => this.setState(
             {
-                messages: data
+                messages: data,
+                checkedMessages: []
             }
         ));
     }
 
-    // componentWillUpdate() {
-    //     console.log("update");
-    //     // getAllMessages().then(data => this.setState(
-    //     //     {
-    //     //         messages: data,
-    //     //         checkedMessages: data.filter(message => !!message.selected)
-    //     //     }
-    //     // ));
-    // }
+    getupdatedCheckedMessages() {
+        return this.state.checkedMessages.map(checkedMessage => this.state.messages.find(message => checkedMessage.id === message.id))
+    }
 
     handleBulkSelect = () => {
-        //mark all messages as selected and add all to checkedMessages
-        let checkedMessages = this.state.checkedMessages.slice().map(checkedMessage => this.state.messages.slice().find(message => checkedMessage.id === message.id));
-        let allSelected = this.state.messages.slice().map(message => checkedMessages.includes(message)).every(curr => curr);
-
-        let messages = this.state.messages.slice().map(message => {
+        //mark all messages as selected and correctls set checkedMessages
+        const messages = this.state.messages.map(message => {
             return {
                 ...message,
-                selected: allSelected ? false : true
+                selected: this.state.messages.map(message => this.getupdatedCheckedMessages().includes(message)).every(curr => curr) ? false : true
             }
         });
         this.setState(
             {
                 messages: messages,
-                checkedMessages: allSelected ? [] : messages
+                checkedMessages: this.state.messages.map(message => this.getupdatedCheckedMessages().includes(message)).every(curr => curr) ? [] : messages
             }
         );
     }
 
     handleCheck = (id, checked) => {
-        //update selected for given message in messages 
-        let messages = this.state.messages.slice().map(message => {
+        //update selected for given message in messages before using messages array
+        const messages = this.state.messages.map(message => {
             if(message.id === id) {
                 return {
                     ...message,
@@ -67,9 +62,9 @@ class App extends React.Component {
         });
 
         //add checked message to array if it does not exist else remove it.
-        let checkedMessage = messages.filter(message => message.id === id)[0];
-        let checkedMessages = this.state.checkedMessages.slice().map(checkedMessage => messages.find(message => checkedMessage.id === message.id));
-        let index = checkedMessages.findIndex(message => message.id === id);
+        const checkedMessage = messages.filter(message => message.id === id)[0];
+        const checkedMessages = this.getupdatedCheckedMessages();
+        const index = checkedMessages.findIndex(message => message.id === id);
         index < 0 ? checkedMessages.push(checkedMessage) : checkedMessages.splice(index,1);
 
         this.setState(
@@ -80,45 +75,31 @@ class App extends React.Component {
         );
     }
 
-    handleStar = (id, starred) => {
-        let messageIdsToUpdate = this.state.messages.slice().filter(message => message.id === id).map(message => message.id);
-        toggleStar(messageIdsToUpdate).then(data => this.setState({messages: data}));
-
+    handleStar = (id) => {
+        toggleStar(this.state.messages.filter(message => message.id === id).map(message => message.id))
+        .then(data => this.setState({messages: data}));
     }
 
     markMessagesRead = () => {
-        let messages = this.state.messages.slice();
-        let checkedMessages = this.state.checkedMessages.slice().map(checkedMessage => messages.find(message => checkedMessage.id === message.id));
-        let messageIdsToUpdate = messages.filter(message => checkedMessages.includes(message)).map(message => message.id);
+        const messageIdsToUpdate = this.state.messages.filter(message => this.getupdatedCheckedMessages().includes(message)).map(message => message.id);
         markMessageRead(messageIdsToUpdate, true).then(data => this.setState({messages: data}));
     }
 
     markMessagesUnread = () => {
-        let messages = this.state.messages.slice();
-        let checkedMessages = this.state.checkedMessages.slice().map(checkedMessage => messages.find(message => checkedMessage.id === message.id));
-        let messageIdsToUpdate = messages.filter(message => checkedMessages.includes(message)).map(message => message.id);
+        const messageIdsToUpdate = this.state.messages.filter(message => this.getupdatedCheckedMessages().includes(message)).map(message => message.id);
         markMessageRead(messageIdsToUpdate, false).then(data => this.setState({messages: data}));
     }
 
     deleteMessages = () => {
-        let messages = this.state.messages.slice();
-        let checkedMessages = this.state.checkedMessages.slice().map(checkedMessage => messages.find(message => checkedMessage.id === message.id));
-        console.log('delete these ', checkedMessages);
-
-        console.log('filtered ', messages.filter(message => !checkedMessages.includes(message)));
-        let messageIdsToUpdate = messages.filter(message => checkedMessages.includes(message)).map(message => message.id);
-        console.log('ids to delete ', messageIdsToUpdate);
+        const messageIdsToUpdate = this.state.messages.filter(message => this.getupdatedCheckedMessages().includes(message)).map(message => message.id);
         deleteMessages(messageIdsToUpdate).then(data => this.setState({messages: data, checkedMessages: []}));
     }
 
     addLabels = (label) => {
-        console.log('label ', label);
-        let messages = this.state.messages.slice();
-        let checkedMessages = this.state.checkedMessages.slice().map(checkedMessage => messages.find(message => checkedMessage.id === message.id));
+        const messageIdsToUpdate = this.state.messages
+        .filter(message => this.getupdatedCheckedMessages().includes(message) && (message.labels.findIndex(currLabel => currLabel === label) < 0))
+        .map(message => message.id);
 
-        let messageIdsToUpdate = messages.filter(message => checkedMessages.includes(message) && (message.labels.findIndex(currLabel => currLabel === label) < 0))
-            .map(message => message.id);
-        console.log('ids to add labels to ', messageIdsToUpdate);
         editLabels(messageIdsToUpdate, true, label)
         .then(data => this.setState({
             messages: data.map(message => {
@@ -131,12 +112,8 @@ class App extends React.Component {
     }
 
     removeLabels = (label) => {
-        console.log('label ', label);
-        let messages = this.state.messages.slice();
-        let checkedMessages = this.state.checkedMessages.slice().map(checkedMessage => messages.find(message => checkedMessage.id === message.id));
-
-        let messageIdsToUpdate = messages.filter(message => checkedMessages.includes(message) && message.labels.includes(label)).map(message => message.id);
-        console.log('ids to remove labels from ', messageIdsToUpdate);
+        let messageIdsToUpdate = this.state.messages.filter(message => this.getupdatedCheckedMessages().includes(message) && message.labels.includes(label))
+        .map(message => message.id);
         editLabels(messageIdsToUpdate, false, label)
         .then(data => this.setState({
             messages: data.map(message => {
@@ -153,7 +130,6 @@ class App extends React.Component {
     }
 
     handleComposeSubmit = (subject, body) => {
-        console.log('submit form');
         createMessage(subject, body)
         .then(data => this.setState({
             compose: !this.state.compose,
@@ -162,13 +138,8 @@ class App extends React.Component {
     }
 
     render() {
-        console.log('messages ', this.state.messages);
-        //calculate number of unread messages
-        const unreadMessageCount = this.state.messages.slice().reduce((count, message) => !message.read ? count + 1 : count, 0);
-        //update checkedMessages
-        const checkedMessages = this.state.checkedMessages.slice().map(checkedMessage => this.state.messages.slice().find(message => checkedMessage.id === message.id));
-        console.log('checked messages ', checkedMessages);
-
+        const unreadMessageCount = this.state.messages.reduce((count, message) => !message.read ? count + 1 : count, 0);
+        const checkedMessages = this.getupdatedCheckedMessages();
 
         return (
             <div className="wrapper">

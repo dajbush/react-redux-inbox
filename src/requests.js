@@ -6,7 +6,6 @@ export function getAllMessages() {
 }
 
 export function toggleStar(messageIds) {
-    console.log('messageIds', messageIds);
     return fetch("http://localhost:8082/api/messages", 
                 {
                     headers: {'Content-Type': 'application/json'},
@@ -22,7 +21,6 @@ export function toggleStar(messageIds) {
 }
 
 export function markMessageRead(messageIds, read) {
-    console.log('messageIds', messageIds);
     return fetch("http://localhost:8082/api/messages", 
                 {
                     headers: {'Content-Type': 'application/json'},

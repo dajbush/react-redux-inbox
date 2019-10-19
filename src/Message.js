@@ -22,7 +22,7 @@ class Message extends React.Component {
     }
 
     handleStarred = (e) => {
-        this.props.handleStar(this.props.message.id, !this.state.starred);
+        this.props.handleStar(this.props.message.id);
     }
 
     createLabels = () => {

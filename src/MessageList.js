@@ -1,21 +1,19 @@
 import React from 'react';
 import Message from './Message';
 
-class MessageList extends React.Component {
-
-    render() {
-        return this.props.messages.map(message => {
-            return (
-                <Message 
-                    key={message.id} 
-                    handleCheck={this.props.handleCheck} 
-                    handleStar={this.props.handleStar} 
-                    message={message} 
-                    isChecked={this.props.checkedMessages.includes(message) ? true : false}
-                />
-            );
-            });
-    }
+const MessageList = (props) => {
+    return props.messages.map(message => {
+        return (
+            <Message 
+                key={message.id} 
+                handleCheck={props.handleCheck} 
+                handleStar={props.handleStar} 
+                message={message} 
+                isChecked={props.checkedMessages.includes(message) ? true : false}
+                starred={message.starred}
+            />
+        );
+    });
 }
 
 export default MessageList;
