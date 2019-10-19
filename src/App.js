@@ -23,8 +23,8 @@ class App extends React.Component {
 
     handleBulkSelect = () => {
         //mark all messages as selected and add all to checkedMessages
-        let allSelected = [...this.state.messages].map(message => !!message.selected).every(curr => curr);
-        let messages = [...this.state.messages].map(message => {
+        let allSelected = this.state.messages.slice().map(message => !!message.selected).every(curr => curr);
+        let messages = this.state.messages.slice().map(message => {
             return {
                 ...message,
                 selected: allSelected ? false : true
@@ -40,7 +40,7 @@ class App extends React.Component {
 
     handleCheck = (id, checked) => {
         //update selected for given message in messages 
-        let messages = [...this.state.messages].map(message => {
+        let messages = this.state.messages.slice().map(message => {
             if(message.id === id) {
                 return {
                     ...message,
@@ -54,7 +54,7 @@ class App extends React.Component {
 
         //add checked message to array if it does not exist else remove it.
         let checkedMessage = messages.filter(message => message.id === id)[0];
-        let checkedMessages = [...this.state.checkedMessages];
+        let checkedMessages = this.state.checkedMessages.slice();
         let index = checkedMessages.findIndex(message => message.id === id);
         index < 0 ? checkedMessages.push(checkedMessage) : checkedMessages.splice(index,1);
 
@@ -67,7 +67,7 @@ class App extends React.Component {
     }
 
     handleStar = (id, starred) => {
-        let messages = [...this.state.messages];
+        let messages = this.state.messages.slice();
         this.setState({messages: messages.map(message => {
             if(message.id === id) {
                 return {
@@ -82,8 +82,8 @@ class App extends React.Component {
     }
 
     markMessagesRead = () => {
-        let messages = [...this.state.messages];
-        let checkedMessages = [...this.state.checkedMessages];
+        let messages = this.state.messages.slice();
+        let checkedMessages = this.state.checkedMessages.slice();
         console.log('mark these as read', this.state.checkedMessages);
         this.setState({
             messages: messages.map(message => {
@@ -97,8 +97,8 @@ class App extends React.Component {
     }
 
     markMessagesUnread = () => {
-        let messages = [...this.state.messages];
-        let checkedMessages = [...this.state.checkedMessages];
+        let messages = this.state.messages.slice();
+        let checkedMessages = this.state.checkedMessages.slice();
         console.log('mark these as Unread', this.state.checkedMessages);
         this.setState({
             messages: messages.map(message => {
@@ -112,8 +112,8 @@ class App extends React.Component {
     }
 
     deleteMessages = () => {
-        let messages = [...this.state.messages];
-        let checkedMessages = [...this.state.checkedMessages];
+        let messages = this.state.messages.slice();
+        let checkedMessages = this.state.checkedMessages.slice();
         console.log('delete these ', checkedMessages);
 
         // messages.filter(message => checkedMessages.includes(message));
@@ -126,8 +126,8 @@ class App extends React.Component {
 
     addLabels = (label) => {
         console.log('label ', label);
-        let messages = [...this.state.messages];
-        let checkedMessages = [...this.state.checkedMessages];
+        let messages = this.state.messages.slice();
+        let checkedMessages = this.state.checkedMessages.slice();
 
         this.setState({
             messages: messages.map(message => {
@@ -143,8 +143,8 @@ class App extends React.Component {
 
     removeLabels = (label) => {
         console.log('label ', label);
-        let messages = [...this.state.messages];
-        let checkedMessages = [...this.state.checkedMessages];
+        let messages = this.state.messages.slice();
+        let checkedMessages = this.state.checkedMessages.slice();
 
         this.setState({
             messages: messages.map(message => {
