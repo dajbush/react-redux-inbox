@@ -2,21 +2,14 @@ import React from 'react';
 
 class Message extends React.Component {
     state = {
-        selected: !!this.props.message.selected,
+        selected: this.props.isChecked,
         starred: !!this.props.message.starred,
         expand: false
     };
 
-    // static getDerivedStateFromProps(nextProps, prevState) {
-    //    return {
-    //         selected: !!nextProps.message.selected,
-    //         starred: nextProps.message.starred
-    //     };
-    // }
-
     componentDidUpdate(prevProps) {
-        if(!!prevProps.message.selected !== !!this.props.message.selected) {
-            this.setState({selected: !!this.props.message.selected});
+        if(prevProps.isChecked !== this.props.isChecked) {
+            this.setState({selected: this.props.isChecked});
         }
         if(!!prevProps.message.starred !== !!this.props.message.starred) {
             this.setState({starred: !!this.props.message.starred});
@@ -40,11 +33,9 @@ class Message extends React.Component {
 
     expandMessage = () => {
         this.setState({expand: !this.state.expand});
-        if(!this.state.expand) this.props.markMessageRead(this.props.message.id);
     }
 
     render() {
-        // console.log('selected ', this.state.selected);
         let {message} = this.props;
         return (
             <div>

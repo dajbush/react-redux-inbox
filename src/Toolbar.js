@@ -7,12 +7,10 @@ class Toolbar extends React.Component {
     }
 
     applyLabelOnChange = (e) => {
-        this.setState({applyLabelValue: e.target.value});
         if(e.target.value !== "Apply label") this.props.addLabels(e.target.value);
     }
 
     removeLabelOnChange = (e) => {
-        this.setState({removeLabelValue: e.target.value});
         if(e.target.value !== "Remove label") this.props.removeLabels(e.target.value);
     }
 
@@ -23,7 +21,7 @@ class Toolbar extends React.Component {
                 <div className="col-md-12">
                     <p className="pull-right">
                         <span className="badge badge">{this.props.unreadCount}</span>
-                        unread messages
+                        {`unread message${this.props.unreadCount === 1 ? "" : "s"}`}
                     </p>
 
                     <button className="btn btn-default" onClick={this.props.handleBulkSelect}>
@@ -38,14 +36,14 @@ class Toolbar extends React.Component {
                         Mark As Unread
                     </button>
 
-                    <select className="form-control label-select" onChange={this.applyLabelOnChange} disabled={`${this.props.numberOfCheckedMessages > 0 ? "" : "disabled"}`}>
+                    <select className="form-control label-select" value={this.state.applyLabelValue} onChange={this.applyLabelOnChange} disabled={`${this.props.numberOfCheckedMessages > 0 ? "" : "disabled"}`}>
                         <option>Apply label</option>
                         <option value="dev">dev</option>
                         <option value="personal">personal</option>
                         <option value="gschool">gschool</option>
                     </select>
 
-                    <select className="form-control label-select" onChange={this.removeLabelOnChange} disabled={`${this.props.numberOfCheckedMessages > 0 ? "" : "disabled"}`}>
+                    <select className="form-control label-select" value={this.state.removeLabelValue}onChange={this.removeLabelOnChange} disabled={`${this.props.numberOfCheckedMessages > 0 ? "" : "disabled"}`}>
                         <option>Remove label</option>
                         <option value="dev">dev</option>
                         <option value="personal">personal</option>

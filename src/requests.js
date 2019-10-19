@@ -38,12 +38,30 @@ export function markMessageRead(messageIds, read) {
     .catch(console.log);
 }
 
-export function deleteMessages() {
+export function deleteMessages(messageIds) {
     return fetch('http://localhost:8082/api/messages', 
                 {
+                    headers: {'Content-Type': 'application/json'},
                     method: 'PATCH',
                     body: JSON.stringify({
+                        messageIds: messageIds,
+                        command: "delete"
+                    })
+                }
+    ).then(response => response.json())
+    .then(data => data)
+    .catch(console.log);
+}
 
+export function editLabels(messageIds, add, label) {
+    return fetch('http://localhost:8082/api/messages', 
+                {
+                    headers: {'Content-Type': 'application/json'},
+                    method: 'PATCH',
+                    body: JSON.stringify({
+                        messageIds: messageIds,
+                        command: add ? "addLabel" : "removeLabel",
+                        label: label
                     })
                 }
     ).then(response => response.json())
