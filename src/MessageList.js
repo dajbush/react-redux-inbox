@@ -9,8 +9,7 @@ const MessageList = (props) => {
                 handleCheck={props.handleCheck} 
                 handleStar={props.handleStar} 
                 message={message} 
-                isChecked={props.checkedMessages.includes(message) ? true : false}
-                starred={message.starred}
+                isChecked={props.checkedMessages.includes(message.id) ? true : false}
             />
         );
     });

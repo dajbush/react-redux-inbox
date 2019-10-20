@@ -9,6 +9,10 @@ const Toolbar = (props) => {
         if(e.target.value !== "Remove label") props.removeLabels(e.target.value);
     }
 
+    const handleMarkRead = (e) => {
+        e.target.innerText.includes('Read') ? props.markMessagesRead(true) : props.markMessagesRead(false)
+    }
+
     return (
         <div className="row toolbar">
             <div className="col-md-12">
@@ -25,11 +29,11 @@ const Toolbar = (props) => {
                     <i className={`fa fa-${props.numberOfCheckedMessages > 0 ? props.allChecked ? "check-" : "minus-" : ""}square-o`}></i>
                 </button>
 
-                <button className="btn btn-default" onClick={props.markMessagesRead} disabled={`${props.numberOfCheckedMessages > 0 ? "" : "disabled"}`}>
+                <button className="btn btn-default" onClick={handleMarkRead} disabled={`${props.numberOfCheckedMessages > 0 ? "" : "disabled"}`}>
                     Mark As Read
                 </button>
 
-                <button className="btn btn-default" onClick={props.markMessagesUnread} disabled={`${props.numberOfCheckedMessages > 0 ? "" : "disabled"}`}>
+                <button className="btn btn-default" onClick={handleMarkRead} disabled={`${props.numberOfCheckedMessages > 0 ? "" : "disabled"}`}>
                     Mark As Unread
                 </button>
 
