@@ -1,3 +1,7 @@
+## Instructions
+
+rewrite this app to use redux
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
